@@ -30,10 +30,10 @@ public class View {
     double resolutionHeight;
     double resolutionWidth;
 
-    public View(Stage aStage, double aResolutionHeight, double aResolutionWidth) {
-        this.resolutionHeight = aResolutionHeight;
+    public View(Stage aStage, Dimension aResolution) {
+        this.resolutionHeight = aResolution.height;
         //sets given resHeight as this
-        this.resolutionWidth = aResolutionWidth;
+        this.resolutionWidth = aResolution.width;
         //sets given resWidth as this
         try {
             initWindow(aStage);
@@ -52,7 +52,7 @@ public class View {
     //region Private Methods
     private void initWindow(Stage aStage) {
         buildScene(aStage);
-        aStage.setMaximized(true);
+        aStage.setMaximized(false);
         aStage.show();
     }
 
@@ -61,38 +61,48 @@ public class View {
 
         ImageView tmpImageView = new ImageView();
         tmpImageView.setCache(true);
+        tmpImageView.setPreserveRatio(true);
         VBox tmpImageViewVBox = new VBox();
         tmpImageViewVBox.setSpacing(20);
+        tmpImageViewVBox.prefHeightProperty().bind(aStage.heightProperty().multiply(0.75));
+        tmpImageViewVBox.prefWidthProperty().bind(aStage.widthProperty().multiply(0.65));
         tmpImageViewVBox.setBorder(new Border(new BorderStroke(Color.BLACK,
                 BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         tmpImageViewVBox.getChildren().add(tmpImageView);
+
 
         TextField tmpUserInputTextField = new TextField();
         tmpUserInputTextField.setAlignment(Pos.TOP_LEFT);
         tmpUserInputTextField.setPadding(new Insets(5, 5, 5, 5));
         tmpUserInputTextField.textProperty().addListener(observable -> {
+
             Dimension tmpStageSize = new Dimension();
-            tmpStageSize.height = (int) aStage.getHeight();
-            tmpStageSize.width = (int) aStage.getWidth();
+            tmpStageSize.height = (int) (aStage.getHeight() * 0.95);
+            tmpStageSize.width = (int) (aStage.getWidth() * 0.95);
+            System.out.println(tmpStageSize);
+            tmpImageViewVBox.setMaxSize(tmpStageSize.width, tmpStageSize.height);
             Image tmpMoleculeImage = control.setParser(tmpUserInputTextField.getText(), tmpStageSize);
             tmpImageView.setImage(tmpMoleculeImage);
         });
-
+        //region Button
         Button tmpRedrawButton = new Button("Redraw!");
         tmpRedrawButton.setPadding(new Insets(5));
         tmpRedrawButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
+                Dimension tmpCurrentImageViewSize = new Dimension();
+                tmpCurrentImageViewSize.width = tmpImageView.scaleXProperty().intValue();
+                tmpCurrentImageViewSize.height = tmpImageView.scaleYProperty().intValue();
+                Image tmpScaledMoleculeImage = control.setParser(tmpUserInputTextField.getText(), tmpCurrentImageViewSize);
+                tmpImageView.setImage(tmpScaledMoleculeImage);
             }
         });
-
+        //endregion
         HBox tmpInputHBox = new HBox(20, tmpUserInputTextField, tmpRedrawButton);
         tmpInputHBox.setAlignment(Pos.TOP_LEFT);
         tmpInputHBox.setSpacing(20);
 
         Text tmpErrorText = new Text("Non SMILES Letter detected!");
-        //tmpErrorText.set(tmpUserInputTextField.getMaxWidth(),tmpUserInputTextField.getMaxHeight());
         HBox tmpErrorHBox = new HBox(20, tmpErrorText);
         tmpErrorHBox.setMaxSize(tmpUserInputTextField.getMaxWidth(),tmpUserInputTextField.getMaxHeight());
 
@@ -103,7 +113,7 @@ public class View {
             allVBox.getChildren().add(tmpErrorHBox);
         } else {allVBox.getChildren().remove(tmpErrorHBox);}
 
-        Scene scene = new Scene(allVBox, resolutionWidth, resolutionHeight);
+        Scene scene = new Scene(allVBox, resolutionWidth * 0.75, resolutionHeight * 0.75);
         aStage.setScene(scene);
     }
 

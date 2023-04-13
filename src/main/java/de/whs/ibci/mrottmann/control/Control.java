@@ -47,7 +47,7 @@ public class Control extends Application{
         try {
             Stage primaryStage = new Stage();
             //primaryStage.setTitle("ViewSMILES");
-            View smilesView = new View(primaryStage, screenResolution().height, screenResolution().width);
+            View smilesView = new View(primaryStage, screenResolution());
         } catch (Exception initViewException) {
 
         }
