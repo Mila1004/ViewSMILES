@@ -84,11 +84,12 @@ public class Model {
         return tmpIsStringContainsNonSmilesCharacter;
     }
 
-    public Image setModelInputSmilesString(String aSmilesInputString, Dimension testDimension) {
+    public Image setModelInputSmilesString(String aSmilesInputString, Dimension aNeededImageSize) {
         System.out.println("model reached");
         if (canParse(aSmilesInputString) == true) {
             System.out.println("canParse true");
-            Image tmpMoleculeImage = parseSmiles(aSmilesInputString, testDimension);
+            Image tmpMoleculeImage = parseSmiles(aSmilesInputString, aNeededImageSize);
+            System.out.println("smiles parsed to image");
             return tmpMoleculeImage;
         } else {
             System.out.println("canParse false");

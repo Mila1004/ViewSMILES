@@ -58,16 +58,19 @@ public class View {
 
     private void buildScene(Stage aStage) {
         Control control = new Control();
+        VBox allVBox = new VBox(20);
 
         ImageView tmpImageView = new ImageView();
         tmpImageView.setCache(true);
         tmpImageView.setPreserveRatio(true);
         VBox tmpImageViewVBox = new VBox();
+        //tmpImageViewVBox.isResizable();
         tmpImageViewVBox.setSpacing(20);
         tmpImageViewVBox.prefHeightProperty().bind(aStage.heightProperty().multiply(0.75));
         tmpImageViewVBox.prefWidthProperty().bind(aStage.widthProperty().multiply(0.65));
         tmpImageViewVBox.setBorder(new Border(new BorderStroke(Color.BLACK,
                 BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        //tmpImageViewVBox.setPadding(new Insets(10));
         tmpImageViewVBox.getChildren().add(tmpImageView);
 
 
@@ -75,14 +78,24 @@ public class View {
         tmpUserInputTextField.setAlignment(Pos.TOP_LEFT);
         tmpUserInputTextField.setPadding(new Insets(5, 5, 5, 5));
         tmpUserInputTextField.textProperty().addListener(observable -> {
-
+            Text tmpErrorText = new Text("Non SMILES Letter detected!");
+            HBox tmpErrorHBox = new HBox(20, tmpErrorText);
+            tmpErrorHBox.setMaxSize(tmpUserInputTextField.getMaxWidth(),tmpUserInputTextField.getMaxHeight());
+            allVBox.getChildren().add(tmpErrorHBox);
             Dimension tmpStageSize = new Dimension();
-            tmpStageSize.height = (int) (aStage.getHeight() * 0.95);
-            tmpStageSize.width = (int) (aStage.getWidth() * 0.95);
+            //tmpStageSize.height = (int) (aStage.getHeight() );
+            tmpStageSize.height = (int) tmpImageViewVBox.getHeight();
+            //tmpStageSize.width = (int) (aStage.getWidth() );
+            tmpStageSize.width = (int) tmpImageViewVBox.getWidth();
             System.out.println(tmpStageSize);
-            tmpImageViewVBox.setMaxSize(tmpStageSize.width, tmpStageSize.height);
-            Image tmpMoleculeImage = control.setParser(tmpUserInputTextField.getText(), tmpStageSize);
-            tmpImageView.setImage(tmpMoleculeImage);
+            System.out.println(tmpImageViewVBox.getWidth() + " " + tmpImageViewVBox.getHeight());
+            if(control.getCanParse(tmpUserInputTextField.getText()) == false) {
+                tmpErrorHBox.setVisible(true);
+            } else {
+                tmpErrorHBox.setVisible(false);
+                Image tmpMoleculeImage = control.setParser(tmpUserInputTextField.getText(), tmpStageSize);
+                tmpImageView.setImage(tmpMoleculeImage);
+            }
         });
         //region Button
         Button tmpRedrawButton = new Button("Redraw!");
@@ -90,10 +103,10 @@ public class View {
         tmpRedrawButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Dimension tmpCurrentImageViewSize = new Dimension();
-                tmpCurrentImageViewSize.width = tmpImageView.scaleXProperty().intValue();
-                tmpCurrentImageViewSize.height = tmpImageView.scaleYProperty().intValue();
-                Image tmpScaledMoleculeImage = control.setParser(tmpUserInputTextField.getText(), tmpCurrentImageViewSize);
+                Dimension tmpCurrentImageViewVBoxSize = new Dimension();
+                tmpCurrentImageViewVBoxSize.height = (int) (tmpImageViewVBox.getHeight());
+                tmpCurrentImageViewVBoxSize.width = (int) (tmpImageViewVBox.getWidth());
+                Image tmpScaledMoleculeImage = control.setParser(tmpUserInputTextField.getText(), tmpCurrentImageViewVBoxSize);
                 tmpImageView.setImage(tmpScaledMoleculeImage);
             }
         });
@@ -106,10 +119,9 @@ public class View {
         HBox tmpErrorHBox = new HBox(20, tmpErrorText);
         tmpErrorHBox.setMaxSize(tmpUserInputTextField.getMaxWidth(),tmpUserInputTextField.getMaxHeight());
 
-
-        VBox allVBox = new VBox(20, tmpInputHBox, tmpImageViewVBox);
+        allVBox.getChildren().addAll(tmpInputHBox, tmpImageViewVBox);
         allVBox.setPadding(new Insets(10, 5, 5, 10));
-        if(control.getCanParse(tmpUserInputTextField.getText()) == false) {
+        if(!control.getCanParse(tmpUserInputTextField.getText())) {
             allVBox.getChildren().add(tmpErrorHBox);
         } else {allVBox.getChildren().remove(tmpErrorHBox);}
 
