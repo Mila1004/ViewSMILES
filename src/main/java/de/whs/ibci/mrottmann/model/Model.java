@@ -53,6 +53,7 @@ public class Model {
         } catch (Exception parseSmilesException) {
             throw new RuntimeException("parseSmiles failed");
         }
+        System.out.println("molecule image");
         return tmpMoleculeImage;
     }
     //endregion
@@ -67,6 +68,12 @@ public class Model {
             Matcher matcher = pattern.matcher(inputSmiles);
             //init matcher with Smiles input
             tmpIsStringContainsNonSmilesCharacter = matcher.find();
+            if(tmpIsStringContainsNonSmilesCharacter == false) {
+                tmpIsStringContainsNonSmilesCharacter = true;
+            } else {
+                tmpIsStringContainsNonSmilesCharacter = false;
+            }
+            System.out.println(tmpIsStringContainsNonSmilesCharacter);
 
             //bool check for pattern
             //bool isParse gets negated value of isStringContainsNonSmilesCharacter
@@ -77,12 +84,17 @@ public class Model {
         return tmpIsStringContainsNonSmilesCharacter;
     }
 
-    public void setModelInputSmilesString(String aSmilesInputString, Dimension testDimension) {
+    public Image setModelInputSmilesString(String aSmilesInputString, Dimension testDimension) {
+        System.out.println("model reached");
         if (canParse(aSmilesInputString) == true) {
-            parseSmiles(aSmilesInputString, testDimension);
+            System.out.println("canParse true");
+            Image tmpMoleculeImage = parseSmiles(aSmilesInputString, testDimension);
+            return tmpMoleculeImage;
         } else {
+            System.out.println("canParse false");
             Control modelControl = new Control();
             modelControl.setErrorText();
+            return null;
         }
     }
 

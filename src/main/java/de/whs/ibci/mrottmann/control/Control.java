@@ -10,6 +10,7 @@ package de.whs.ibci.mrottmann.control;
 import de.whs.ibci.mrottmann.model.Model;
 import de.whs.ibci.mrottmann.view.View;
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -79,9 +80,10 @@ public class Control extends Application{
 
     }
 
-    public void setParser(String aSmilesInputString, Dimension aStageSize) {
-        this.parseSmilesModel.setModelInputSmilesString(aSmilesInputString, aStageSize);
+    public Image setParser(String aSmilesInputString, Dimension aStageSize) {
+        Image tmpMoleculeImage = this.parseSmilesModel.setModelInputSmilesString(aSmilesInputString, aStageSize);
         System.out.println("setControlInputSmilesString");
+        return tmpMoleculeImage;
     }
 
     public void setErrorText() {

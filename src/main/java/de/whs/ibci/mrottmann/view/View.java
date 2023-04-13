@@ -15,9 +15,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import javax.swing.*;
@@ -69,11 +71,11 @@ public class View {
         tmpUserInputTextField.setAlignment(Pos.TOP_LEFT);
         tmpUserInputTextField.setPadding(new Insets(5, 5, 5, 5));
         tmpUserInputTextField.textProperty().addListener(observable -> {
-            //Control control = new Control();
             Dimension tmpStageSize = new Dimension();
             tmpStageSize.height = (int) aStage.getHeight();
             tmpStageSize.width = (int) aStage.getWidth();
-            control.setParser(tmpUserInputTextField.getText(), tmpStageSize);
+            Image tmpMoleculeImage = control.setParser(tmpUserInputTextField.getText(), tmpStageSize);
+            tmpImageView.setImage(tmpMoleculeImage);
         });
 
         Button tmpRedrawButton = new Button("Redraw!");
@@ -89,8 +91,8 @@ public class View {
         tmpInputHBox.setAlignment(Pos.TOP_LEFT);
         tmpInputHBox.setSpacing(20);
 
-        TextArea tmpErrorText = new TextArea("Non SMILES Letter detected!");
-        tmpErrorText.setMaxSize(tmpUserInputTextField.getMaxWidth(),tmpUserInputTextField.getMaxHeight());
+        Text tmpErrorText = new Text("Non SMILES Letter detected!");
+        //tmpErrorText.set(tmpUserInputTextField.getMaxWidth(),tmpUserInputTextField.getMaxHeight());
         HBox tmpErrorHBox = new HBox(20, tmpErrorText);
         tmpErrorHBox.setMaxSize(tmpUserInputTextField.getMaxWidth(),tmpUserInputTextField.getMaxHeight());
 
