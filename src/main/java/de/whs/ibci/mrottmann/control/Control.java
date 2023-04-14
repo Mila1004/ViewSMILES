@@ -6,7 +6,6 @@
  */
 package de.whs.ibci.mrottmann.control;
 
-
 import de.whs.ibci.mrottmann.model.Model;
 import de.whs.ibci.mrottmann.view.View;
 import javafx.application.Application;
@@ -16,77 +15,68 @@ import javafx.stage.Stage;
 import java.awt.*;
 
 public class Control extends Application{
-    //class variables
-    double resolutionHeight;
-    double resolutionWidth;
-    String inputSmiles;
-    //user Smiles input
-    Dimension resolution;
-    //screen resolution in java.awt Dimension
-    boolean isParse;
-    //bool if Smiles code parsable by CDK
-    Model parseSmilesModel = new Model();
-    //View smilesView;
 
-    //class control constructor
+    //region Class Constructor
     public Control() {
 
     }
+    //endregion
 
-    public boolean getCanParse(String aInputSmiles) {
-        if(this.parseSmilesModel.getModelCanParse(aInputSmiles) == true) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
+    //region Override Public Methods
     @Override
     public void start(Stage aPrimaryStage) {
-        //overwritten start method from javafx
         try {
             Stage primaryStage = new Stage();
-            //primaryStage.setTitle("ViewSMILES");
-            View smilesView = new View(primaryStage, screenResolution());
+            View smilesView = new View(primaryStage);
         } catch (Exception initViewException) {
-
-        }
-        try {
-            //parseSmilesModel = new Model();
-            //System.out.println("new model");
-        } catch (Exception initParseSmilesModelException) {
-
+            throw new RuntimeException(initViewException);
         }
     }
+    //endregion
 
-    //region Private Methods
-
-    private Dimension screenResolution() {
-        try {
-            resolution = Toolkit.getDefaultToolkit().getScreenSize();
-        } catch (Exception screenResolutionException) {
-
-        } return resolution;
-    }
-
-    private String getInputSmiles() {
-        inputSmiles = "C";
-        return inputSmiles;
-    }
-
+    //region Public Methods
     public void startViewSmiles() {
-        //parseSmilesModel = new Model();
-        Application.launch();
+        try {
+            Application.launch();
+        } catch (Exception startViewSmilesException) {
+            throw new RuntimeException(startViewSmilesException);
+        }
+    }
 
+    public boolean getCanParse(String anInputSmiles) {
+        return initModel().getModelCanParse(anInputSmiles);
     }
 
     public Image setParser(String aSmilesInputString, Dimension aStageSize) {
-        Image tmpMoleculeImage = this.parseSmilesModel.setModelInputSmilesString(aSmilesInputString, aStageSize);
-        System.out.println("setControlInputSmilesString");
-        return tmpMoleculeImage;
+        try {
+            return initModel().setModelInputSmilesString(aSmilesInputString, aStageSize);
+        } catch (Exception setParserException) {
+            return null;
+        }
     }
 
-    public void setErrorText() {
-
+    public Dimension getScreenResolution() {
+        return screenResolution();
     }
+    //endregion
+
+    //region Private Methods
+    private Dimension screenResolution() {
+        try {
+            Dimension tmpResolution = Toolkit.getDefaultToolkit().getScreenSize();
+            return tmpResolution;
+        } catch (Exception screenResolutionException) {
+            return null;
+        }
+    }
+
+    private Model initModel() {
+        try {
+            Model tmpParseSmilesModel = new Model();
+            return tmpParseSmilesModel;
+        } catch (Exception initModelException) {
+            throw new RuntimeException(initModelException);
+        }
+    }
+    //endregion
 }

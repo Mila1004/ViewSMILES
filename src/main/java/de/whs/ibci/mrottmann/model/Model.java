@@ -6,10 +6,6 @@
  */
 package de.whs.ibci.mrottmann.model;
 
-/** imports */
-//region imports
-
-import de.whs.ibci.mrottmann.control.Control;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.openscience.cdk.depict.Depiction;
@@ -17,17 +13,11 @@ import org.openscience.cdk.depict.DepictionGenerator;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
-
 import java.awt.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
-//endregion
-
 public class Model {
-
-    Control modelControl;
 
     //region Model Constructor
     public Model() {
@@ -36,77 +26,50 @@ public class Model {
     //endregion
 
     //region Public Methods
-    /** Parses javafx Image for given SMILES String molecule by converting
-     * the generated BufferedImage from java.awt to desired javafx Image,
+    public Image setModelInputSmilesString(String aSmilesInputString, Dimension aNeededImageSize) {
+        if (canParse(aSmilesInputString)) {
+            Image tmpMoleculeImage = parseSmiles(aSmilesInputString, aNeededImageSize);
+            return tmpMoleculeImage;
+        } else {
+            return null;
+        }
+    }
+
+    public boolean getModelCanParse(String anInputSmilesString) {
+        return canParse(anInputSmilesString);
+    }
+    //endregion
+
+    //region Private Methods
+    /** Parses javafx Image for given SMILES String.
+     * converses the generated BufferedImage from java.awt to desired javafx Image,
      * this Image is then returned. */
     private Image parseSmiles(String aSmilesString, Dimension aResolution) {
         Image tmpMoleculeImage;
         try {
             SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
-
-
             IAtomContainer tmpAtomContainer = smilesParser.parseSmiles(aSmilesString);
-            DepictionGenerator depictionGenerator = new DepictionGenerator().withZoom(5).withSize(aResolution.getWidth(), aResolution.getHeight());
+            DepictionGenerator depictionGenerator = new DepictionGenerator().withZoom(5).
+                    withSize(aResolution.getWidth(), aResolution.getHeight());
             Depiction tmpDepiction = depictionGenerator.depict(tmpAtomContainer);
-
             tmpMoleculeImage = SwingFXUtils.toFXImage(tmpDepiction.toImg(),null);
         } catch (Exception parseSmilesException) {
-            throw new RuntimeException("parseSmiles failed");
+            throw new RuntimeException(parseSmilesException);
         }
-        System.out.println("molecule image");
         return tmpMoleculeImage;
     }
-    //endregion
 
-    //region Private Methods
-    private boolean canParse(String inputSmiles) {
-        //checks Smiles input for correct notation
-        boolean tmpIsStringContainsNonSmilesCharacter = false;
+    private boolean canParse(String anInputSmiles) {
+        boolean tmpIsStringContainsNonSmilesCharacter;
         try {
             Pattern pattern = Pattern.compile("[^a-ik-pr-zA-IK-PR-Z0-9*#.={}()+-]");
-            //compiles a pattern with chars in brackets
-            Matcher matcher = pattern.matcher(inputSmiles);
-            //init matcher with Smiles input
+            Matcher matcher = pattern.matcher(anInputSmiles);
             tmpIsStringContainsNonSmilesCharacter = matcher.find();
-            if(tmpIsStringContainsNonSmilesCharacter == false) {
-                tmpIsStringContainsNonSmilesCharacter = true;
-            } else {
-                tmpIsStringContainsNonSmilesCharacter = false;
-            }
-            System.out.println(tmpIsStringContainsNonSmilesCharacter);
-
-            //bool check for pattern
-            //bool isParse gets negated value of isStringContainsNonSmilesCharacter
-
+            tmpIsStringContainsNonSmilesCharacter = !tmpIsStringContainsNonSmilesCharacter;
         } catch (Exception canParseException) {
-
+            throw new RuntimeException(canParseException);
         }
         return tmpIsStringContainsNonSmilesCharacter;
     }
-
-    public Image setModelInputSmilesString(String aSmilesInputString, Dimension aNeededImageSize) {
-        System.out.println("model reached");
-        if (canParse(aSmilesInputString) == true) {
-            System.out.println("canParse true");
-            Image tmpMoleculeImage = parseSmiles(aSmilesInputString, aNeededImageSize);
-            System.out.println("smiles parsed to image");
-            return tmpMoleculeImage;
-        } else {
-            System.out.println("canParse false");
-            Control modelControl = new Control();
-            modelControl.setErrorText();
-            return null;
-        }
-    }
-
-    public boolean getModelCanParse(String aInputSmilesString) {
-        if (canParse(aInputSmilesString) == true) {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-
     //endregion
 }

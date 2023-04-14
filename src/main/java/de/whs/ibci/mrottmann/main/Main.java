@@ -9,12 +9,15 @@ package de.whs.ibci.mrottmann.main;
 import de.whs.ibci.mrottmann.control.Control;
 
 public class Main {
-    public static void main(String[] args) {
+
+    //region Public Methods
+    public static void main(String[] args) throws Error {
         try {
             Control control = new Control();
             control.startViewSmiles();
         } catch (Exception initException) {
-
+            throw new Error(initException);
         }
     }
+    //endregion
 }
