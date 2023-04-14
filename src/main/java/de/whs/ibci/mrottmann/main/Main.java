@@ -11,6 +11,13 @@ import de.whs.ibci.mrottmann.control.Control;
 public class Main {
 
     //region Public Methods
+
+    /**
+     * Main method to start ViewSMILES.
+     *
+     * @param args  needed for correct functionality of main method, not null
+     * @throws Error if control.startViewSmiles fails
+     */
     public static void main(String[] args) throws Error {
         try {
             Control control = new Control();

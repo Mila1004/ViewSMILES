@@ -41,9 +41,14 @@ public class Model {
     //endregion
 
     //region Private Methods
-    /** Parses javafx Image for given SMILES String.
-     * converses the generated BufferedImage from java.awt to desired javafx Image,
-     * this Image is then returned. */
+
+    /**
+     * Parses given SMILES String to JavaFX Image.
+     *
+     * @param aSmilesString  SMILES string given from control, not null
+     * @param aResolution  resolution needed for Image size, not null
+     * @return JavaFX Image to control to display in view
+     */
     private Image parseSmiles(String aSmilesString, Dimension aResolution) {
         Image tmpMoleculeImage;
         try {
@@ -59,6 +64,12 @@ public class Model {
         return tmpMoleculeImage;
     }
 
+    /**
+     * Checks given String if CDK can parse it.
+     *
+     * @param anInputSmiles  SMILES string given by control, null returns null
+     * @return boolean
+     */
     private boolean canParse(String anInputSmiles) {
         boolean tmpIsStringContainsNonSmilesCharacter;
         try {
